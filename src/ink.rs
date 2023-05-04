@@ -19,14 +19,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use crate::traits::{
-    Environment as AssetsEnvironment,
-    PalletAssets,
-};
-use obce::ink_lang::env::{
-    DefaultEnvironment,
-    Environment,
-};
+use crate::traits::{Environment as AssetsEnvironment, PalletAssets};
+use obce::ink_lang::env::{DefaultEnvironment, Environment};
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]

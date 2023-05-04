@@ -24,11 +24,7 @@ use obce::ink_lang::prelude::vec::Vec;
 #[cfg(feature = "substrate")]
 use obce::substrate::sp_std::vec::Vec;
 #[cfg(feature = "substrate")]
-use obce::substrate::{
-    frame_support::traits::PalletInfoAccess,
-    CriticalError,
-    SupportCriticalError,
-};
+use obce::substrate::{frame_support::traits::PalletInfoAccess, CriticalError, SupportCriticalError};
 #[cfg(feature = "substrate")]
 use pallet_assets::Error as AssetError;
 
@@ -134,9 +130,9 @@ pub enum Error<T> {
     /// Minimum balance should be non-zero.
     MinBalanceZero,
     /// Unable to increment the consumer reference counters on the account. Either no provider
-    /// reference exists to allow a non-zero balance of a non-self-sufficient asset, or the
-    /// maximum number of consumers has been reached.
-    NoProvider,
+    /// reference exists to allow a non-zero balance of a non-self-sufficient asset, or one
+    /// fewer then the maximum number of consumers has been reached.
+    UnavailableConsumer,
     /// Invalid metadata given.
     BadMetadata,
     /// No approval exists that would allow the transfer.
@@ -172,7 +168,7 @@ impl<T: pallet_assets::Config> From<CriticalError> for Error<T> {
             if module.index == asset_module {
                 let mut input = module.error.as_slice();
                 if let Ok(asset_error) = <AssetError<T> as scale::Decode>::decode(&mut input) {
-                    return asset_error.into()
+                    return asset_error.into();
                 }
             }
         }
@@ -193,7 +189,7 @@ impl<T> From<AssetError<T>> for Error<T> {
             AssetError::<T>::InUse => Error::<T>::InUse,
             AssetError::<T>::BadWitness => Error::<T>::BadWitness,
             AssetError::<T>::MinBalanceZero => Error::<T>::MinBalanceZero,
-            AssetError::<T>::NoProvider => Error::<T>::NoProvider,
+            AssetError::<T>::UnavailableConsumer => Error::<T>::UnavailableConsumer,
             AssetError::<T>::BadMetadata => Error::<T>::BadMetadata,
             AssetError::<T>::Unapproved => Error::<T>::Unapproved,
             AssetError::<T>::WouldDie => Error::<T>::WouldDie,

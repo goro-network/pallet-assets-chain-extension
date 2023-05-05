@@ -19,19 +19,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use super::traits::{
-    Environment as AssetsEnvironment,
-    PalletAssets,
-};
 use crate::traits::{
+    Environment as AssetsEnvironment,
     Error,
     Origin,
+    PalletAssets,
 };
 use obce::substrate::{
     frame_support::traits::fungibles::{
         approvals,
+        metadata,
         Inspect,
-        InspectMetadata,
     },
     frame_system::{
         Config as SysConfig,
@@ -43,6 +41,7 @@ use obce::substrate::{
     },
     sp_runtime::traits::StaticLookup,
     sp_std::vec::Vec,
+    ChainExtensionEnvironment,
     ExtensionContext,
 };
 use pallet_assets::Config as AssetConfig;
@@ -57,11 +56,12 @@ impl<T: SysConfig + AssetConfig + ContractConfig> AssetsEnvironment for T {
 }
 
 #[obce::implementation]
-impl<'a, 'b, E, T> PalletAssets<T> for ExtensionContext<'a, 'b, E, T, AssetsExtension>
+impl<'a, E, T, Env> PalletAssets<T> for ExtensionContext<'a, E, T, Env, AssetsExtension>
 where
     T: SysConfig + AssetConfig + ContractConfig,
     <<T as SysConfig>::Lookup as StaticLookup>::Source: From<<T as SysConfig>::AccountId>,
     E: Ext<T = T>,
+    Env: ChainExtensionEnvironment<E, T>,
 {
     fn create(&mut self, id: T::AssetId, admin: T::AccountId, min_balance: T::Balance) -> Result<(), Error<T>> {
         // The contract should have money for the deposit
@@ -75,12 +75,22 @@ where
 
     fn mint(&mut self, id: T::AssetId, who: T::AccountId, amount: T::Balance) -> Result<(), Error<T>> {
         // Only origin with `issuer` right can do mint
-        Ok(pallet_assets::Pallet::<T>::mint(self.origin(), id.into(), who.into(), amount)?)
+        Ok(pallet_assets::Pallet::<T>::mint(
+            self.origin(),
+            id.into(),
+            who.into(),
+            amount,
+        )?)
     }
 
     fn burn(&mut self, id: T::AssetId, who: T::AccountId, amount: T::Balance) -> Result<(), Error<T>> {
         // Only origin with `admin` right can do burn
-        Ok(pallet_assets::Pallet::<T>::burn(self.origin(), id.into(), who.into(), amount)?)
+        Ok(pallet_assets::Pallet::<T>::burn(
+            self.origin(),
+            id.into(),
+            who.into(),
+            amount,
+        )?)
     }
 
     fn balance_of(&self, id: T::AssetId, owner: T::AccountId) -> T::Balance {
@@ -161,15 +171,15 @@ where
     }
 
     fn metadata_name(&self, id: T::AssetId) -> Vec<u8> {
-        <pallet_assets::Pallet<T> as InspectMetadata<T::AccountId>>::name(&id)
+        <pallet_assets::Pallet<T> as metadata::Inspect<T::AccountId>>::name(id)
     }
 
     fn metadata_symbol(&self, id: T::AssetId) -> Vec<u8> {
-        <pallet_assets::Pallet<T> as InspectMetadata<T::AccountId>>::symbol(&id)
+        <pallet_assets::Pallet<T> as metadata::Inspect<T::AccountId>>::symbol(id)
     }
 
     fn metadata_decimals(&self, id: T::AssetId) -> u8 {
-        <pallet_assets::Pallet<T> as InspectMetadata<T::AccountId>>::decimals(&id)
+        <pallet_assets::Pallet<T> as metadata::Inspect<T::AccountId>>::decimals(id)
     }
 }
 
@@ -182,11 +192,12 @@ pub trait Internal<T: AssetsEnvironment + SysConfig> {
     fn select_origin(&mut self, origin: Origin) -> Result<T::RuntimeOrigin, Error<T>>;
 }
 
-impl<'a, 'b, E, T> Internal<T> for ExtensionContext<'a, 'b, E, T, AssetsExtension>
+impl<'a, E, T, Env> Internal<T> for ExtensionContext<'a, E, T, Env, AssetsExtension>
 where
     T: SysConfig + AssetConfig + ContractConfig,
     <<T as SysConfig>::Lookup as StaticLookup>::Source: From<<T as SysConfig>::AccountId>,
     E: Ext<T = T>,
+    Env: ChainExtensionEnvironment<E, T>,
 {
     fn origin(&mut self) -> T::RuntimeOrigin {
         RawOrigin::Signed(self.env.ext().address().clone()).into()

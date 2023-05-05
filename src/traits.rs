@@ -24,7 +24,11 @@ use obce::ink_lang::prelude::vec::Vec;
 #[cfg(feature = "substrate")]
 use obce::substrate::sp_std::vec::Vec;
 #[cfg(feature = "substrate")]
-use obce::substrate::{frame_support::traits::PalletInfoAccess, CriticalError, SupportCriticalError};
+use obce::substrate::{
+    frame_support::traits::PalletInfoAccess,
+    CriticalError,
+    SupportCriticalError,
+};
 #[cfg(feature = "substrate")]
 use pallet_assets::Error as AssetError;
 
@@ -168,7 +172,7 @@ impl<T: pallet_assets::Config> From<CriticalError> for Error<T> {
             if module.index == asset_module {
                 let mut input = module.error.as_slice();
                 if let Ok(asset_error) = <AssetError<T> as scale::Decode>::decode(&mut input) {
-                    return asset_error.into();
+                    return asset_error.into()
                 }
             }
         }

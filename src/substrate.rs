@@ -19,14 +19,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-use crate::traits::{Environment as AssetsEnvironment, Error, Origin, PalletAssets};
+use crate::traits::{
+    Environment as AssetsEnvironment,
+    Error,
+    Origin,
+    PalletAssets,
+};
 use obce::substrate::{
-    frame_support::traits::fungibles::{approvals, metadata, Inspect},
-    frame_system::{Config as SysConfig, RawOrigin},
-    pallet_contracts::{chain_extension::Ext, Config as ContractConfig},
+    frame_support::traits::fungibles::{
+        approvals,
+        metadata,
+        Inspect,
+    },
+    frame_system::{
+        Config as SysConfig,
+        RawOrigin,
+    },
+    pallet_contracts::{
+        chain_extension::Ext,
+        Config as ContractConfig,
+    },
     sp_runtime::traits::StaticLookup,
     sp_std::vec::Vec,
-    ChainExtensionEnvironment, ExtensionContext,
+    ChainExtensionEnvironment,
+    ExtensionContext,
 };
 use pallet_assets::Config as AssetConfig;
 

@@ -209,7 +209,7 @@ where
                 // TODO: Add check that the contract is admin. Right now `asset-pallet` doesn't have getter for admin.
                 // TODO: Return `Error::<T>::ContractIsNotAdmin`
                 // let a = pallet_assets::Pallet::<T>::asset();
-                self.env.ext().caller().clone()
+                self.env.ext().caller().account_id()?.clone()
             }
             Origin::Address => self.env.ext().address().clone(),
         });

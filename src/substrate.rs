@@ -94,7 +94,7 @@ where
     }
 
     fn balance_of(&self, id: T::AssetId, owner: T::AccountId) -> T::Balance {
-        <pallet_assets::Pallet<T> as Inspect<T::AccountId>>::balance(id.into(), &owner)
+        <pallet_assets::Pallet<T> as Inspect<T::AccountId>>::balance(id, &owner)
     }
 
     fn total_supply(&self, id: T::AssetId) -> T::Balance {
@@ -102,7 +102,7 @@ where
     }
 
     fn allowance(&self, id: T::AssetId, owner: T::AccountId, spender: T::AccountId) -> T::Balance {
-        <pallet_assets::Pallet<T> as approvals::Inspect<T::AccountId>>::allowance(id.into(), &owner, &spender)
+        <pallet_assets::Pallet<T> as approvals::Inspect<T::AccountId>>::allowance(id, &owner, &spender)
     }
 
     fn approve_transfer(

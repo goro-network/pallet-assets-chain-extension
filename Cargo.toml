@@ -10,10 +10,10 @@ scale = { package = "parity-scale-codec", version = "3", default-features = fals
     "derive",
 ] }
 scale-info = { version = "2", default-features = false, features = ["derive"] }
-obce = { git = "https://github.com/goro-network/obce", rev = "eea8b6a", default-features = false }
+obce = { git = "https://github.com/goro-network/obce", rev = "5b4746e", default-features = false }
 
 # Substrate deps
-pallet-assets = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v1.0.0", default-features = false, optional = true }
+pallet-assets = { git = "https://github.com/goro-network/substrate", branch = "goro-network-v1.0.0-alpha", default-features = false, optional = true }
 
 # Ink deps
 ink = { version = "4.2.1", default-features = false, optional = true }
